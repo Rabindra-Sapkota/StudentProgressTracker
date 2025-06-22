@@ -19,7 +19,7 @@ EXERCISES = [
     "Progress Tracker",
 ]
 
-MAIL_SUBJECT = "Python Class Progress Update"
+MAIL_SUBJECT = "Python Class Assignment Progress Update"
 MAIL_BODY = """
 Hello {student_name},
 
