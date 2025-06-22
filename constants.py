@@ -26,6 +26,7 @@ Hello {student_name},
 Your progress is {progress}%.
 
 Completed Exercises: {completed}.
+
 Incomplete Exercises: {incomplete}.
 
 Please complete the pending exercises for which theory is completed.
