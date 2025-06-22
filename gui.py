@@ -98,7 +98,7 @@ class StudentTrackerApp:
             command=self.mark_exercise_complete,
         ).pack(side=LEFT, padx=5)
 
-        Button(control_frame, text="Send Message", command=self.send_message).pack(
+        Button(control_frame, text="Send Message", command=self.send_mail).pack(
             side=LEFT, padx=5
         )
         Button(control_frame, text="Import from CSV", command=self.import_csv).pack(
@@ -261,28 +261,22 @@ class StudentTrackerApp:
 
         Button(window, text="Save", command=save_and_close).pack(pady=10)
 
-    def send_message(self):
-        if not self.selected_student:
-            messagebox.showwarning("No Selection", "Select a student to send message.")
-            return
+    def send_mail(self):
+        for student_email, student_detail in self.data.items():
+            try:
+                student_name = student_detail.get("name")
+                progress, completed, pending = calculate_progress(student_detail)
 
-        student = self.data[self.selected_student]
-        progress, completed_exercises, incomplete_exercises = calculate_progress(
-            student
-        )
-        try:
-            mail_body = constants.MAIL_BODY.format(
-                student_name=student.get("name"),
-                progress=progress,
-                completed=completed_exercises,
-                incomplete=incomplete_exercises,
-            )
-            send_progress_email(
-                [self.selected_student], constants.MAIL_SUBJECT, mail_body
-            )
-            messagebox.showinfo("Success", "Message sent successfully.")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to send email: {e}")
+                mail_body = constants.MAIL_BODY.format(
+                    student_name=student_name,
+                    progress=progress,
+                    completed=completed,
+                    incomplete=pending,
+                )
+                send_progress_email([student_email], constants.MAIL_SUBJECT, mail_body)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to send email: {e}")
+        messagebox.showinfo("Success", "Message sent successfully.")
 
     def import_csv(self):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
@@ -299,19 +293,19 @@ class StudentTrackerApp:
 
 
 def calculate_progress(student):
-    completed_exercise_count = sum(student["exercises"].values())
-    total_exercise_count = len(student["exercises"])
+    exercises = student["exercises"]
+    progress = round((sum(exercises.values()) / len(exercises)) * 100, 2)
+
     completed_exercises = [
         exercise_name
-        for exercise_name, is_completed in student["exercises"].items()
+        for exercise_name, is_completed in exercises.items()
         if is_completed
     ]
     incomplete_exercises = [
         exercise_name
-        for exercise_name, is_completed in student["exercises"].items()
+        for exercise_name, is_completed in exercises.items()
         if not is_completed
     ]
-    progress = round((completed_exercise_count / total_exercise_count) * 100, 2)
     completed_exercises_name = ", ".join(completed_exercises)
     incomplete_exercises_name = ", ".join(incomplete_exercises)
     return progress, completed_exercises_name, incomplete_exercises_name
