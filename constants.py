@@ -15,8 +15,8 @@ EXERCISES = [
     "OOP",
     "Library",
     "Database",
-    "Samachar Sangraha",
-    "Progress Tracker",
+    "Proj_1",
+    "Proj_2",
 ]
 
 MAIL_SUBJECT = "Python Class Assignment Progress Update"
