@@ -106,10 +106,15 @@ class StudentTrackerApp:
         )
 
         self.tree = ttk.Treeview(
-            self.root, columns=("name", "progress"), show="headings"
+            self.root,
+            columns=("name", "email", "progress", "completed", "pending"),
+            show="headings",
         )
         self.tree.heading("name", text="Name")
+        self.tree.heading("email", text="Email Address")
         self.tree.heading("progress", text="Progress (%)")
+        self.tree.heading("completed", text="Completed Exercises")
+        self.tree.heading("pending", text="Pending Exercises")
         self.tree.pack(fill=BOTH, expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
 
@@ -119,7 +124,18 @@ class StudentTrackerApp:
             progress, completed_exercises, incomplete_exercises = calculate_progress(
                 info
             )
-            self.tree.insert("", END, iid=email, values=(info["name"], progress))
+            self.tree.insert(
+                "",
+                END,
+                iid=email,
+                values=(
+                    info["name"],
+                    email,
+                    progress,
+                    completed_exercises,
+                    incomplete_exercises,
+                ),
+            )
 
     def on_select(self, event):
         selected = self.tree.selection()
