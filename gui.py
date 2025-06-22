@@ -98,7 +98,7 @@ class StudentTrackerApp:
             command=self.mark_exercise_complete,
         ).pack(side=LEFT, padx=5)
 
-        Button(control_frame, text="Send Message", command=self.send_mail).pack(
+        Button(control_frame, text="Send Report", command=self.send_mail).pack(
             side=LEFT, padx=5
         )
         Button(control_frame, text="Import from CSV", command=self.import_csv).pack(
@@ -107,35 +107,48 @@ class StudentTrackerApp:
 
         self.tree = ttk.Treeview(
             self.root,
-            columns=("name", "email", "progress", "completed", "pending"),
+            columns=("sn", "name", "email", "progress", "pending", "completed"),
             show="headings",
         )
+
+        # Headings
+        self.tree.heading("sn", text="SN")
         self.tree.heading("name", text="Name")
         self.tree.heading("email", text="Email Address")
         self.tree.heading("progress", text="Progress (%)")
-        self.tree.heading("completed", text="Completed Exercises")
         self.tree.heading("pending", text="Pending Exercises")
+        self.tree.heading("completed", text="Completed Exercises")
+
+        # Static widths (customize these as needed)
+        self.tree.column("sn", width=1)
+        self.tree.column("name", width=30)
+        self.tree.column("email", width=40)
+        self.tree.column("progress", width=20, anchor="center")
+        self.tree.column("pending", width=400, anchor="center")
+        self.tree.column("completed", width=400, anchor="center")
+
+        # Packing and binding
         self.tree.pack(fill=BOTH, expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
 
     def refresh_student_list(self):
         self.tree.delete(*self.tree.get_children())
+        student_list = list()
         for email, info in self.data.items():
-            progress, completed_exercises, incomplete_exercises = calculate_progress(
-                info
-            )
+            progress, completed, pending = calculate_progress(info)
+            student_list.append((info["name"], email, progress, pending, completed))
+
+        sorted_students = sorted(student_list, key=lambda x: x[2])
+
+        sn = 1
+        for name, email, progress, pending, completed in sorted_students:
             self.tree.insert(
                 "",
                 END,
                 iid=email,
-                values=(
-                    info["name"],
-                    email,
-                    progress,
-                    completed_exercises,
-                    incomplete_exercises,
-                ),
+                values=(sn, name, email, progress, pending, completed),
             )
+            sn = sn + 1
 
     def on_select(self, event):
         selected = self.tree.selection()
