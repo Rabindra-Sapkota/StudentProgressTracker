@@ -19,7 +19,8 @@ from tkinter import (
 from data_handler import load_data, save_data, import_csv_data
 from dialogs import get_long_input
 from email_utils import send_progress_email
-from constants import EXERCISES
+from constants import PYTHON_EXERCISES
+from constants import DATA_SCIENCE_EXERCISES
 import os
 
 
@@ -171,9 +172,11 @@ class StudentTrackerApp:
             messagebox.showerror("Duplicate", "Student already exists with same email.")
             return
 
+        exercises = PYTHON_EXERCISES if 'Python' in self.class_name else DATA_SCIENCE_EXERCISES
+
         self.data[email] = {
             "name": name,
-            "exercises": {exercise_name: False for exercise_name in EXERCISES},
+            "exercises": {exercise_name: False for exercise_name in exercises},
         }
         save_data(self.data_file, self.data)
         self.refresh_student_list()
