@@ -1,5 +1,6 @@
 import json, os, csv
-from constants import EXERCISES
+from constants import PYTHON_EXERCISES
+from constants import DATA_SCIENCE_EXERCISES
 
 
 def load_data(file_path):
@@ -38,9 +39,14 @@ def import_csv_data(file_path, existing_data):
 
         if email in existing_data:
             raise ValueError(f"Email {email} already exists. Please check csv file.")
+        
+        if "data_science" in file_path:
+            exercise_list = DATA_SCIENCE_EXERCISES
+        else:
+            exercise_list = PYTHON_EXERCISES 
 
         existing_data[email] = {
             "name": name,
-            "exercises": {exercise_name: False for exercise_name in EXERCISES},
+            "exercises": {exercise_name: False for exercise_name in exercise_list},
         }
     return existing_data

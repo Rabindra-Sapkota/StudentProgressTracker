@@ -1,4 +1,4 @@
-EXERCISES = [
+PYTHON_EXERCISES = [
     "Basic",
     "String",
     "Input Output",
@@ -18,6 +18,8 @@ EXERCISES = [
     "Proj_1",
     "Proj_2",
 ]
+
+DATA_SCIENCE_EXERCISES = []
 
 MAIL_SUBJECT = "Python Class Assignment Progress Update"
 MAIL_BODY = """
